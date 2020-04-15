@@ -488,8 +488,11 @@ if __name__ == '__main__':
 
     first_run = True
     while first_run or search.daemon:
-        search.heb.get_curbside_stores(search)
-        print("Stores with available Curbside (as of {}):\n".format(get_now()))
+        try:
+            search.heb.get_curbside_stores(search)
+            print("Stores with available Curbside (as of {}):\n".format(get_now()))
+        except Exception as e:
+            print("Caught exception: " + str(e))
         for curbside_store in search.heb.curbside_stores:
             if search.slots_only and len(curbside_store.timeslots) < 1:
                 continue
