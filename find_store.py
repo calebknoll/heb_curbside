@@ -483,14 +483,15 @@ if __name__ == '__main__':
     search.email_username = args.email_username if args.email_username else None
     if search.email_to:
         search.email_password = getpass(prompt="Password for {}:".format(search.email_username))
-    if not search.daemon:
-        search.interval = 0
 
     first_run = True
     while first_run or search.daemon:
         try:
             search.heb.get_curbside_stores(search)
-            print("Stores with available Curbside (as of {}):\n".format(get_now()))
+            if search.store_id:
+                print("Store #{} available Curbside (as of {}):\n".format(search.store_id, get_now()))
+            else:
+                print("Stores with available Curbside in a {}-mile radius from {} (as of {}):\n".format(search.radius, search.zip, get_now()))
         except Exception as e:
             print("Caught exception: " + str(e))
         for curbside_store in search.heb.curbside_stores:
@@ -507,5 +508,7 @@ if __name__ == '__main__':
         search.num_curbside_slots = len(curbside_timeslots)
         search.speak_num_curbside_slots()
         search.send_email()
-        sleep(search.interval)
+        if search.daemon:
+            print("Refreshing in {} seconds...".format(args.interval))
+            sleep(search.interval)
         first_run = False
