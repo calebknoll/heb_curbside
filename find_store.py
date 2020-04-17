@@ -501,6 +501,8 @@ if __name__ == '__main__':
             print("Stores with available Curbside (as of {}):\n".format(get_now()))
         except Exception as e:
             print("Caught exception: " + str(e))
+            sleep(3)
+            continue
         for curbside_store in search.heb.curbside_stores:
             if search.slots_only and len(curbside_store.timeslots) < 1:
                 continue
